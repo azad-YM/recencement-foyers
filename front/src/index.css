@@ -124,3 +124,76 @@ select{
   }
 }
 
+
+.btn-menu {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    background-color: #ffffff;
+    color: #495057;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    transition: background-color 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+}
+
+
+.btn-menu:hover {
+    background-color: #f1f5f9;
+    border-color: #adb5bd;
+    color: #212529;
+}
+
+
+.btn-menu.active {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+}
+
+
+.btn-menu:focus-visible {
+    outline: 3px solid #86b7fe;
+    outline-offset: 2px;
+}
+
+
+.menu-actions {
+    position: absolute;
+    top: calc(var(--max-width) + 5px);
+    right: var(--margin);
+    z-index: 1000;
+    min-width: 170px;
+    padding: 6px var(--margin); 
+    box-shadow: var(--margin) 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+
+.menu-actions button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: var(--max-width);
+    padding: 10px 14px;
+    text-align: left;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+
+.menu-actions button:hover {
+    background-color: #f1f5f9;
+}
+
+
+.menu-actions .action-danger:hover {
+    background-color: #fff1f2;
+}
+

@@ -3,12 +3,13 @@ import { Button } from "../Components/Forms/Button";
 
 
 export function Liste({foyers, onClickEdit, onClickDelete}){
+  const [open, setOpen] = useState(null);
   //Etat du fitre
-  const [communeSelected, setCommuneSelected] = useState("")
+  const [selectedCommune, setSelectedCommune] = useState("")
   //Etat du tri
   const [tri, setTri] = useState("");
   //Etat de consultation d'un foyer
-  const [foyerSelected, setFoyerSelected] = useState(null);
+  const [selectedFoyer, setSelectedFoyer] = useState(null);
   //Récupérer les communes automatiquement   
   const communes = [...new Set(
     foyers.map((foyer) => foyer.commune)
@@ -16,7 +17,7 @@ export function Liste({foyers, onClickEdit, onClickDelete}){
          
   //Consulter un foyer
   const handleView = (foyer) => {
-    setFoyerSelected(foyer);
+    setSelectedFoyer(foyer);
   }
   // Nombre total des personnes recensées
   const totalPersonnes = foyers.reduce((total, foyer) =>
@@ -25,10 +26,10 @@ export function Liste({foyers, onClickEdit, onClickDelete}){
    const foyersFiltresEtTries = [...foyers]
   //Filtrer par commune
   .filter((foyer) => {
-      if (communeSelected=== "") {
+      if (selectedCommune=== "") {
       return true;
     }
-   return foyer.commune === communeSelected;
+   return foyer.commune === selectedCommune;
   })
   // Trier par nom
     .sort((a, b) => {
@@ -72,8 +73,8 @@ export function Liste({foyers, onClickEdit, onClickDelete}){
           </label>
           <select
             className="form-select"
-            value={communeSelected}
-            onChange={(e) => setCommuneSelected(e.target.value)}>
+            value={selectedCommune}
+            onChange={(e) => setSelectedCommune(e.target.value)}>
             <option value="">Toutes les communes</option>
                 {communes.map((commune) => (
                   <option key={commune} value={commune}>
@@ -123,25 +124,66 @@ export function Liste({foyers, onClickEdit, onClickDelete}){
                 <td className='align-item-center'>{foyer.nomResponsable}</td>
                 <td>{foyer.commune}</td>
                 <td>{foyer.nombrePersonnes}</td>
-                <td>
-                   <Button 
-                        type='button' 
-                        onClick={() => onClickEdit(foyer)}
-                        className="btn btn-primary m-1" >
-                        Modifier
-                     </Button>
-                    <Button 
-                      type='button'
-                      onClick={()=> onClickDelete(foyer.id)}
-                      className="btn btn-danger m-1">
-                      Supprimer
-                  </Button>
-                  <Button 
-                      type='button'
-                      onClick={() => handleView(foyer)} 
-                      className="btn btn-info m-1" >
-                      Consulter
-                  </Button>
+                <td className="text-end">
+                  <div className="position-relative d-inline-block">
+                     <Button
+                         className={`btn-menu ${open=== foyer.id ? "active" : ""}`}
+                        type="button"
+                        aria-expanded={open === foyer.id}
+                        onClick={() =>
+                        setOpen(
+                            open === foyer.id ? null : foyer.id
+                        )
+                        }
+                        aria-label="Ouvrir le menu des actions">
+                         ⋮
+                      </Button>
+                      {open === foyer.id && 
+                        (<div className="dropdown-menu show dropdown-menu-end menu-actions">
+                            <Button
+                                className="dropdown-item"
+                                onClick={() =>{ handleView(foyer);  setOpen(null);}}>
+                              <svg xmlns="http://www.w3.org/2000/svg"
+                                 
+                                  width="20" height="20" viewBox="0 0 24 24"
+                                  fill="none" stroke="currentColor" strokeWidth="1.8"
+                                  strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                              </svg>
+                                Consulter
+                              </Button>
+                              <Button
+                                  className="dropdown-item"
+                                  onClick={() => {onClickEdit(foyer);  setOpen(null);}}>
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" strokeWidth="1.8"
+                                    strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M12 20h9"/>
+                                  <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                                </svg>
+                                  Modifier
+                              </Button>
+                              <Button
+                                className="dropdown-item text-danger action-danger"
+                                onClick={()=> {onClickDelete(foyer.id);  setOpen(null);}} >
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                    
+                                    width="20" height="20" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" strokeWidth="1.8"
+                                    strokeLinecap="round" strokeLinejoin="round">
+                                  <path d="M3 6h18"/>
+                                  <path d="M8 6V4h8v2"/>
+                                  <path d="m19 6-1 14H6L5 6"/>
+                                  <path d="M10 11v5M14 11v5"/>
+                                </svg>
+                                Supprimer
+                              </Button>
+                           </div>
+                          ) 
+                       }
+                     </div>
                 </td>
               </tr>
             ))
@@ -149,49 +191,49 @@ export function Liste({foyers, onClickEdit, onClickDelete}){
         </tbody>
       </table>
     </div>
-    {foyerSelected && (
+    {selectedFoyer && (
       <div
         className="modal fade show d-block"  style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
         tabIndex="-1"
         role="dialog">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
-            <div className="modal-header bg-info">
+            <div className="modal-header ">
               <h5 className="modal-title">
                 Informations du foyer
               </h5>
               <Button
                 className="btn-close"
-                onClick={() => setFoyerSelected(null)}>
+                onClick={() => setSelectedFoyer(null)}>
               </Button>
             </div>
             <div className="modal-body bg-light">
               <p>
                 <strong>Responsable :</strong>{" "}
-                {foyerSelected.nomResponsable}
+                {selectedFoyer.nomResponsable}
               </p>
               <p>
                 <strong>Adresse :</strong>{" "}
-                {foyerSelected.adresse}
+                {selectedFoyer.adresse}
               </p>
               <p>
                 <strong>Commune :</strong>{" "}
-                {foyerSelected.commune}
+                {selectedFoyer.commune}
               </p>
               <p>
                 <strong>Nombre de personnes :</strong>{" "}
-                {foyerSelected.nombrePersonnes}
+                {selectedFoyer.nombrePersonnes}
               </p>
               <p>
                 <strong>Téléphone :</strong>{" "}
-                {foyerSelected.telephone}
+                {selectedFoyer.telephone}
               </p>
             </div>
             <div className="modal-footer">
               <Button
                 type='button'
                 className="btn btn-danger "
-                onClick={() => setFoyerSelected(null)}>
+                onClick={() => setSelectedFoyer(null)}>
                 Fermer
               </Button>
             </div>
